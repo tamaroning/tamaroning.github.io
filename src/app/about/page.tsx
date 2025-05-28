@@ -1,12 +1,15 @@
 "use client";
 
 import { List, Space, Text } from "@mantine/core";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function About() {
 	return (
 		<div style={{ margin: 20 }}>
 			<Text fw={700} size="lg">tamaron</Text>
+
+			<Image src="/assets/icon.jpg" alt="icon" width={300} height={300} style={{ borderRadius: "50%" }} />
 
 			<Space h="md" />
 

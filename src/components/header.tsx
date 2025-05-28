@@ -4,6 +4,7 @@ import { useDisclosure } from '@mantine/hooks';
 const mainLinks = [
 	{ link: '/', label: 'Home' },
 	{ link: '/about', label: 'About' },
+	{ link: '/links', label: 'Links' },
 ];
 
 export function MyHeader() {
