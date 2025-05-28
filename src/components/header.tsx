@@ -8,8 +8,6 @@ const mainLinks = [
 ];
 
 export function MyHeader() {
-	const [opened, { toggle }] = useDisclosure(false);
-
 	const mainItems = mainLinks.map((item) => (
 		<Anchor<'a'>
 			href={item.link}
@@ -21,17 +19,11 @@ export function MyHeader() {
 
 	return (
 		<Container style={{ paddingTop: 10, paddingBottom: 10 }} size="lg">
-			<Box visibleFrom="sm">
+			<Box>
 				<Group gap={20} justify="left" >
 					{mainItems}
 				</Group>
 			</Box>
-			<Burger
-				opened={opened}
-				onClick={toggle}
-				size="sm"
-				hiddenFrom="sm"
-			/>
 		</Container>
 	);
 }
