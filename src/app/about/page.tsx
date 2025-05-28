@@ -44,7 +44,7 @@ export default function About() {
 				</List.Item>
 				<List.Item>
 					wanco: ライブマイグレーションをサポートするWebAssemblyコンパイラ, 田村来希, 小谷大祐, 松本直樹, 岡部寿男. <br />
-					<Link href="https://sigos.ipsj.or.jp/event/comsys2024/">情報処理学会 第36回コンピュータシステム・シンポジウム (ComSys'24)</Link>, 優秀若手発表賞.
+					<Link href="https://sigos.ipsj.or.jp/event/comsys2024/">情報処理学会 第36回コンピュータシステム・シンポジウム (ComSys 2024)</Link>, 優秀若手発表賞.
 				</List.Item>
 			</List>
 
