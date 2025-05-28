@@ -165,6 +165,15 @@ export default function About() {
 					</List>
 				</List.Item>
 			</List>
+
+			<Space h="md" />
+
+			<Text fw={700} size="lg">スキル</Text>
+			<List>
+				<List.Item>Experienced: C, C++, Rust, WebAssembly</List.Item>
+				<List.Item>Intermediate: React, TypeScript, JavaScript, Python</List.Item>
+				<List.Item>Tools: Git, GCP, Firebase, Linux, Docker</List.Item>
+			</List>
 		</div>
 	);
 }
