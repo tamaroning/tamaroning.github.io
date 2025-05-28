@@ -1,5 +1,4 @@
-import { Anchor, Box, Burger, Container, Group } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Anchor, Box, Container, Group } from '@mantine/core';
 
 const mainLinks = [
 	{ link: '/', label: 'Home' },

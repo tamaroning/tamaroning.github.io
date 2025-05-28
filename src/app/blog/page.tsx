@@ -1,6 +1,6 @@
 "use client";
 
-import { Grid, List, Loader, Paper, Space, Text } from "@mantine/core";
+import { Grid, Loader, Paper, Space, Text } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -30,14 +30,14 @@ export default function Blog() {
 		return () => {
 			setIsMounted(false);
 		};
-	}, []);
+	}, [isMounted]);
 
 
 
 	return (
 		<div style={{ margin: 20 }}>
 			<Text fw={700} size="xl">Blog</Text>
-			
+
 			{feed ? feed?.items.map((item: any, index: number) =>
 				<div key={index} style={{ marginTop: 20 }}>
 					<Paper shadow="xs" p="xl">
