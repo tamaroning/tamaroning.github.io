@@ -1,6 +1,6 @@
 "use client";
 
-import { Text, Button } from "@mantine/core";
+import { Text } from "@mantine/core";
 
 export default function About() {
 	return (

@@ -2,7 +2,6 @@
 
 import '@mantine/core/styles.css';
 import { AppShell, MantineProvider } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { MyHeader } from '@/components/header';
 
 export default function RootLayout({
