@@ -8,24 +8,46 @@ import Parser from "rss-parser";
 
 
 const BLOG_RSS_URL = "https://tamaron.hatenablog.com/rss";
+const FALLBACK_URL = "/assets/hatena-rss.xml";
 
 export default function Blog() {
 	const [feed, setFeed] = React.useState<any>(null);
 	const [isMounted, setIsMounted] = React.useState(true);
 
+
 	React.useEffect(() => {
 		const fetchData = async () => {
+			let ok = false;
 			try {
 				const parser = new Parser();
 				if (isMounted) {
 					setFeed(await parser.parseURL(BLOG_RSS_URL));
+					ok = true;
 				}
 			} catch (error) {
 				console.error('Error fetching data:', error);
 			}
+
+			if (ok) {
+				return;
+			}
+
+			// CORSの制約でフェッチが失敗した場合、ローカルのXMLファイルを使用
+			try {
+				const parser = new Parser();
+				if (isMounted) {
+					setFeed(await parser.parseURL(FALLBACK_URL));
+					ok = true;
+				}
+			} catch (error) {
+				console.error('Error fetching data:', error);
+			}
+
 		};
 
 		fetchData();
+
+
 
 		return () => {
 			setIsMounted(false);
