@@ -156,11 +156,11 @@ export default function About() {
           <List>
             <List.Item>
               Kyoto University, Faculty of Engineering, Department of
-              Informatics "Operating Systems". TA
+              Informatics, Operating Systems. TA
             </List.Item>
             <List.Item>
               Kyoto University, Faculty of Engineering, Department of
-              Informatics "Computer Architecture". TA
+              Informatics, Computer Architecture. TA
             </List.Item>
           </List>
         </List.Item>
