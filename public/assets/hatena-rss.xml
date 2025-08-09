@@ -4,9 +4,266 @@
     <title>tamaron&#39;s diary</title>
     <link>https://tamaron.hatenablog.com/</link>
     <description></description>
-    <lastBuildDate>Sun, 25 May 2025 15:33:33 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 01 Jul 2025 14:42:28 +0900</lastBuildDate>
     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
     <generator>Hatena::Blog</generator>
+    
+      
+      
+        <item>
+          <title>uvでJupyterを使う方法</title>
+          <link>https://tamaron.hatenablog.com/entry/2025/07/01/144228</link>          <description>&lt;h2 id=&quot;1-Jupyterノートブックを含むフォルダにcdする&quot;&gt;1. Jupyterノートブックを含むフォルダにcdする&lt;/h2&gt;
+
+&lt;h2 id=&quot;2-VSCodeの設定&quot;&gt;2. &lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/VSCode&quot;&gt;VSCode&lt;/a&gt;の設定&lt;/h2&gt;
+
+&lt;p&gt;venvの&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/python&quot;&gt;python&lt;/a&gt;を使うように
+&lt;code&gt;.vscode/settings.json&lt;/code&gt;に以下を追加する。&lt;/p&gt;
+
+&lt;pre class=&quot;code bash&quot; data-lang=&quot;bash&quot; data-unlink&gt;{
+    &amp;#34;python.defaultInterpreterPath&amp;#34;: &amp;#34;.venv/bin/python&amp;#34;,
+}
+&lt;/pre&gt;
+
+
+&lt;p&gt;Reload Windowで設定ファイルをロードする。&lt;/p&gt;
+
+&lt;h2 id=&quot;3-uvプロジェクトの初期化&quot;&gt;3. uvプロジェクトの初期化&lt;/h2&gt;
+
+&lt;pre class=&quot;code bash&quot; data-lang=&quot;bash&quot; data-unlink&gt;uv init
+uv add jupyter&lt;/pre&gt;
+
+
+&lt;h2 id=&quot;4-Jupyterの起動&quot;&gt;4. Jupyterの起動&lt;/h2&gt;
+
+&lt;p&gt;以下でブラウザが立ち上がる。&lt;/p&gt;
+
+&lt;pre class=&quot;code bash&quot; data-lang=&quot;bash&quot; data-unlink&gt;jupyter notebook&lt;/pre&gt;
+
+</description>          <pubDate>Tue, 01 Jul 2025 14:42:28 +0900</pubDate>
+          <guid isPermaLink="false">hatenablog://entry/6802418398496012796</guid>
+          
+          <enclosure url="https://ogimage.blog.st-hatena.com/26006613542645241/6802418398496012796/1751348612" type="image/png" length="0" />
+        </item>
+      
+    
+      
+      
+        <item>
+          <title>wasm-optのAsyncifyについて</title>
+          <link>https://tamaron.hatenablog.com/entry/2025/06/23/200032</link>          <description>&lt;h2 id=&quot;概要&quot;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;Asyncify.cpp&lt;/code&gt; は、&lt;strong&gt;WebAssembly モジュールに「一時停止・再開」機能を付与するパス&lt;/strong&gt;（変換処理）を実装している。
+これにより、&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/C/C%2B%2B&quot;&gt;C/C++&lt;/a&gt; などの同期的なコードを、JS などの非同期イベント駆動環境でも「途中で止めて、後から再開」できるようにする。&lt;/p&gt;
+
+&lt;h2 id=&quot;1-目的&quot;&gt;1. 目的&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;WebAssembly の関数呼び出しやローカル変数の状態を保存・復元し、途中で「一時停止」や「再開」ができるようにする。&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;例: ファイル読み込みやネットワーク待ちなど、非同期イベントで一時停止し、完了後に元の関数の続きから再開できる。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 id=&quot;2-主な仕組み流れ&quot;&gt;2. 主な仕組み・流れ&lt;/h2&gt;
+
+&lt;h3 id=&quot;21-Asyncifyの全体像&quot;&gt;2.1. Asyncifyの全体像&lt;/h3&gt;
+
+&lt;p&gt;Asyncifyは、WebAssemblyバイナリを変換し、&lt;strong&gt;コールスタックやローカル変数の状態を保存・復元できるようにするパス&lt;/strong&gt;である。これにより、もともと同期的なコード（&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/C/C%2B%2B&quot;&gt;C/C++&lt;/a&gt;など）を、非同期イベント駆動環境（JSなど）でも「一時停止・再開」できるようにする。&lt;/p&gt;
+
+&lt;p&gt;AsyncifyはBinaryenのパスとして実装されており、&lt;code&gt;wasm-opt --asyncify&lt;/code&gt; などで利用できる。変換後のWasmには、スタックの巻き戻し（unwind）・再構築（rewind）を制御するための&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/API&quot;&gt;API&lt;/a&gt;が自動的に追加される。&lt;/p&gt;
+
+&lt;h3 id=&quot;22-状態管理とAPI&quot;&gt;2.2. 状態管理と&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/API&quot;&gt;API&lt;/a&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;__asyncify_state&lt;/code&gt; という&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/%A5%B0%A5%ED%A1%BC%A5%D0%A5%EB%CA%D1%BF%F4&quot;&gt;グローバル変数&lt;/a&gt;で「今の状態（通常/&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/%A5%A2%A5%F3%A5%EF%A5%A4%A5%F3%A5%C9&quot;&gt;アンワインド&lt;/a&gt;中/リワインド中）」を管理する。
+
+&lt;ul&gt;
+&lt;li&gt;0: 通常実行&lt;/li&gt;
+&lt;li&gt;1: &lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/%A5%A2%A5%F3%A5%EF%A5%A4%A5%F3%A5%C9&quot;&gt;アンワインド&lt;/a&gt;（unwinding, スタックを巻き戻して一時停止）&lt;/li&gt;
+&lt;li&gt;2: リワインド（rewinding, スタックを再構築して再開）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;__asyncify_data&lt;/code&gt; という&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/%A5%B0%A5%ED%A1%BC%A5%D0%A5%EB%CA%D1%BF%F4&quot;&gt;グローバル変数&lt;/a&gt;で「保存用データ構造体」のポインタを管理する。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;Asyncifyが自動生成・エクスポートする主な&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/API&quot;&gt;API&lt;/a&gt;は以下の通り：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;asyncify_start_unwind(ptr)&lt;/code&gt;：巻き戻しを開始する。&lt;code&gt;ptr&lt;/code&gt;は保存用データ構造体の先頭アドレス。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;asyncify_stop_unwind()&lt;/code&gt;：巻き戻しを終了する。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;asyncify_start_rewind(ptr)&lt;/code&gt;：再構築を開始する。&lt;code&gt;ptr&lt;/code&gt;は保存用データ構造体の先頭アドレス。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;asyncify_stop_rewind()&lt;/code&gt;：再構築を終了する。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;asyncify_get_state()&lt;/code&gt;：現在の状態を返す。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h4 id=&quot;データ構造とメモリレイアウト&quot;&gt;データ構造とメモリレイアウト&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;asyncify_start_unwind&lt;/code&gt;や&lt;code&gt;asyncify_start_rewind&lt;/code&gt;に渡すポインタは、Wasmのリニアメモリ上の構造体を指す必要がある。構造体のレイアウトは以下の通り：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;オフセット0: i32（asyncify stackの開始アドレス）&lt;/li&gt;
+&lt;li&gt;オフセット4: i32（asyncify stackの終了アドレス）&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;この領域の直後に、実際のasyncify stack（状態保存用のメモリ領域）を確保する。スタックサイズが小さすぎると&lt;code&gt;unreachable&lt;/code&gt;例外が発生するため、十分なサイズを確保する必要がある。&lt;/p&gt;
+
+&lt;h3 id=&quot;23-コールスタックの巻き戻し再構築&quot;&gt;2.3. コールスタックの巻き戻し・再構築&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;一時停止したい箇所で&lt;code&gt;asyncify_start_unwind&lt;/code&gt;を呼び出すと、Wasmランタイムはコールスタックとローカル変数の状態を保存しながら「巻き戻し」を開始する。&lt;/li&gt;
+&lt;li&gt;その後、&lt;code&gt;asyncify_stop_unwind&lt;/code&gt;で巻き戻しを終了し、Wasmの実行が一時停止する。&lt;/li&gt;
+&lt;li&gt;再開時は&lt;code&gt;asyncify_start_rewind&lt;/code&gt;を呼び、保存された状態をもとに「再構築（リワインド）」を行う。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;asyncify_stop_rewind&lt;/code&gt;で再構築を終了し、元の関数の続きから実行が再開される。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h4 id=&quot;なぜ2回呼ぶ必要があるのか&quot;&gt;なぜ2回呼ぶ必要があるのか&lt;/h4&gt;
+
+&lt;p&gt;巻き戻し・再構築の過程では、同じ関数が2回呼ばれることになる。1回目は通常実行、2回目はリワインドのため。関数内で「今が巻き戻し中か再構築中か」を判定し、適切な分岐を行う必要がある。&lt;/p&gt;
+
+&lt;h3 id=&quot;24-例純粋なWebAssemblyでの利用&quot;&gt;2.4. 例：純粋なWebAssemblyでの利用&lt;/h3&gt;
+
+&lt;pre class=&quot;code lang-wat&quot; data-lang=&quot;wat&quot; data-unlink&gt;&lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;module&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;memory&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;spectest&amp;quot;&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;print&amp;quot;&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$print&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;param&lt;/span&gt; &lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)))&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;asyncify&amp;quot;&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;start_unwind&amp;quot;&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_start_unwind&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;param&lt;/span&gt; &lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)))&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;asyncify&amp;quot;&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;stop_unwind&amp;quot;&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_stop_unwind&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;asyncify&amp;quot;&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;start_rewind&amp;quot;&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_start_rewind&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;param&lt;/span&gt; &lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)))&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;asyncify&amp;quot;&lt;/span&gt; &lt;span class=&quot;synConstant&quot;&gt;&amp;quot;stop_rewind&amp;quot;&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_stop_rewind&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;global&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$sleeping&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$runtime&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$main&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$print&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$sleep&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$print&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$sleep&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;if&lt;/span&gt;
+      &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.eqz &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;global&lt;/span&gt;.get &lt;span class=&quot;synIdentifier&quot;&gt;$sleeping&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;block&lt;/span&gt;
+        &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;global&lt;/span&gt;.set &lt;span class=&quot;synIdentifier&quot;&gt;$sleeping&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+        &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.store &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+        &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.store &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+        &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_start_unwind&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;block&lt;/span&gt;
+        &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_stop_rewind&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;global&lt;/span&gt;.set &lt;span class=&quot;synIdentifier&quot;&gt;$sleeping&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synPreProc&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$runtime&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$main&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_stop_unwind&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$print&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$asyncify_start_rewind&lt;/span&gt; &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synType&quot;&gt;i32&lt;/span&gt;.const &lt;span class=&quot;synConstant&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;synSpecial&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;synStatement&quot;&gt;call&lt;/span&gt; &lt;span class=&quot;synIdentifier&quot;&gt;$main&lt;/span&gt;&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;synSpecial&quot;&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+
+
+&lt;p&gt;この例では、&lt;code&gt;main&lt;/code&gt;を2回呼ぶことで、途中で一時停止し、外部から再開できるようになっている。&lt;/p&gt;
+
+&lt;h3 id=&quot;25-最適化とオーバーヘッド&quot;&gt;2.5. 最適化とオーバーヘッド&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Asyncifyを有効にすると、Wasmバイナリのサイズは1.5～2倍程度になることが多い。&lt;/li&gt;
+&lt;li&gt;実行速度も最大で2倍程度遅くなるが、実際に一時停止・再開を多用しない限り、オーバーヘッドは限定的。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;importリスト&lt;/strong&gt;（どのimportが一時停止を引き起こすか）を明示することで、不要な関数の変換を避け、サイズ・速度のオーバーヘッドを大幅に削減できる。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;indirect call&lt;/strong&gt;（間接呼び出し）が多い場合、静的解析が難しくなり、オーバーヘッドが増える。&lt;/li&gt;
+&lt;li&gt;最適化時は&lt;code&gt;wasm-opt -O1 --asyncify&lt;/code&gt;のように、Asyncifyと同時に最適化パスを有効にすることが推奨される。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h3 id=&quot;26-注意点&quot;&gt;2.6. 注意点&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;asyncify stackのサイズが不足すると&lt;code&gt;unreachable&lt;/code&gt;例外が発生するため、十分な領域を確保すること。&lt;/li&gt;
+&lt;li&gt;最適化レベルによっては、関数のインライン展開などでAsyncifyの動作が乱れる場合がある。&lt;code&gt;-O1&lt;/code&gt;程度が安全。&lt;/li&gt;
+&lt;li&gt;importリストやindirect callの扱いを適切に設定することで、オーバーヘッドを最小化できる。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;（参考: &lt;a href=&quot;https://kripken.github.io/blog/wasm/2019/07/16/asyncify.html&quot;&gt;Pause and Resume WebAssembly with Binaryen&#39;s Asyncify&lt;/a&gt;）&lt;/p&gt;
+
+&lt;h2 id=&quot;3-主なクラス構造&quot;&gt;3. 主なクラス・構造&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt; クラス名             &lt;/th&gt;
+&lt;th&gt; 役割                                                                                   &lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt; &lt;code&gt;ModuleAnalyzer&lt;/code&gt;     &lt;/td&gt;
+&lt;td&gt; どの関数が「状態を変える（&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/%A5%A2%A5%F3%A5%EF%A5%A4%A5%F3%A5%C9&quot;&gt;アンワインド&lt;/a&gt;/リワインドを開始する）」可能性があるかを解析する         &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt; &lt;code&gt;AsyncifyFlow&lt;/code&gt;       &lt;/td&gt;
+&lt;td&gt; 関数本体の制御フローを書き換え、「一時停止・再開」に対応できるようにする                  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt; &lt;code&gt;AsyncifyLocals&lt;/code&gt;     &lt;/td&gt;
+&lt;td&gt; ローカル変数の保存・復元処理を挿入する                                                      &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt; &lt;code&gt;FakeGlobalHelper&lt;/code&gt;   &lt;/td&gt;
+&lt;td&gt; 一時的な値の保存用に「偽&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/%A5%B0%A5%ED%A1%BC%A5%D0%A5%EB%CA%D1%BF%F4&quot;&gt;グローバル変数&lt;/a&gt;」を使う仕組みを提供する                                     &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;h2 id=&quot;4-変換の例&quot;&gt;4. 変換の例&lt;/h2&gt;
+
+&lt;p&gt;例えば、&lt;/p&gt;
+
+&lt;pre class=&quot;code lang-cpp&quot; data-lang=&quot;cpp&quot; data-unlink&gt;x = x + &lt;span class=&quot;synConstant&quot;&gt;1&lt;/span&gt;;
+&lt;span class=&quot;synIdentifier&quot;&gt;bar&lt;/span&gt;(x);
+x = x / &lt;span class=&quot;synConstant&quot;&gt;2&lt;/span&gt;;
+&lt;/pre&gt;
+
+
+&lt;p&gt;のようなコードがあった場合、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;「bar(x)」の呼び出しで一時停止する可能性があるなら、&lt;/li&gt;
+&lt;li&gt;その前後で「状態チェック」や「保存・復元処理」が自動的に挿入される。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 id=&quot;5-オプションカスタマイズ&quot;&gt;5. オプション・カスタマイズ&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;どの関数・インポートが一時停止を引き起こすかをリストで指定できる。&lt;/li&gt;
+&lt;li&gt;最適化レベルやアサート挿入、詳細なログ出力などもオプションで制御可能だ。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 id=&quot;6-まとめ&quot;&gt;6. まとめ&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Asyncify.cpp は、WebAssembly の関数を「途中で一時停止・再開できる」ように自動変換するパスである。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;コールスタックやローカル変数の保存・復元&lt;/li&gt;
+&lt;li&gt;状態管理用の&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/%A5%B0%A5%ED%A1%BC%A5%D0%A5%EB%CA%D1%BF%F4&quot;&gt;グローバル変数&lt;/a&gt;・&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/API&quot;&gt;API&lt;/a&gt;の自動生成&lt;/li&gt;
+&lt;li&gt;制御フローの書き換え&lt;/li&gt;
+&lt;li&gt;どの関数を変換するかの解析&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;などを行い、&lt;a class=&quot;keyword&quot; href=&quot;https://d.hatena.ne.jp/keyword/C/C%2B%2B&quot;&gt;C/C++&lt;/a&gt; などの「同期的なコード」を JS などの「非同期イベント駆動環境」でも自然に動かせるようにする。&lt;/p&gt;
+</description>          <pubDate>Mon, 23 Jun 2025 20:00:32 +0900</pubDate>
+          <guid isPermaLink="false">hatenablog://entry/6802418398485635121</guid>
+          
+          <enclosure url="https://ogimage.blog.st-hatena.com/26006613542645241/6802418398485635121/1750676432" type="image/png" length="0" />
+        </item>
+      
     
       
       
