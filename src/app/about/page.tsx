@@ -36,11 +36,11 @@ export default function About() {
       </Text>
       <List>
         <List.Item>
-          2025 April - Present: M.S. in Kyoto University, Graduate School of
+          Apr 2025 - Present: M.S. in Kyoto University, Graduate School of
           Informatics, Social Informatics Course.
         </List.Item>
         <List.Item>
-          2021 April - 2025 March: B.E. in Kyoto University, Faculty of
+          Apr 2021 - Mar 2025: B.E. in Kyoto University, Faculty of
           Engineering, Department of Informatics.
         </List.Item>
       </List>
@@ -51,10 +51,10 @@ export default function About() {
         Work Experience
       </Text>
       <List>
-        <List.Item>2025 August - Present: Woven by Toyota. (Intern)</List.Item>
-        <List.Item>2023 December - Present: estie, inc. (Part-time)</List.Item>
-        <List.Item>2023 August - 2024 September: Sony. (Intern)</List.Item>
-        <List.Item>2022 August - 2025 September: NTT R&D. (Intern)</List.Item>
+        <List.Item>Aug 2025 - Present: Woven by Toyota. (Intern)</List.Item>
+        <List.Item>Dec 2023 - Present: estie, inc. (Part-time)</List.Item>
+        <List.Item>Aug 2023 - Sep 2024: Sony. (Intern)</List.Item>
+        <List.Item>Aug 2022 - Sep 2025: NTT R&D. (Intern)</List.Item>
       </List>
 
       <Space h="md" />
