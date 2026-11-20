@@ -51,10 +51,10 @@ export default function About() {
         Work Experience
       </Text>
       <List>
-        <List.Item>Dec 2023 - Present: estie, inc (Part-time).</List.Item>
+        <List.Item>Dec 2023 - Mar 2026: estie, inc (Part-time).</List.Item>
         <List.Item>Aug 2025 - Oct 2025: Woven by Toyota (Intern).</List.Item>
-        <List.Item>Aug 2023 - Sep 2024: Sony (Intern).</List.Item>
-        <List.Item>Aug 2022 - Sep 2025: NTT R&D (Intern).</List.Item>
+        <List.Item>Aug 2023 - Sep 2023: Sony (Intern).</List.Item>
+        <List.Item>Aug 2022 - Sep 2022: NTT R&D (Intern).</List.Item>
       </List>
 
       <Space h="md" />
@@ -65,7 +65,7 @@ export default function About() {
       <List>
         <List.Item>
           Bringing Together Cross-ISA Checkpoint/Restoration and AOT Compilation
-          of WebAssembly Programs, Raiki Tamura, Daisuke Kotani, Kazuyuki Shudo,
+          of WebAssembly Programs, <b>Raiki Tamura</b>, Daisuke Kotani, Kazuyuki Shudo,
           Yasuo Okabe. <br />
           <Link href="https://conf.researchr.org/home/icfp-splash-2025/mplr-2025">
             MPLR 2025
@@ -73,20 +73,21 @@ export default function About() {
           .
         </List.Item>
         <List.Item>
-          Wanco: WebAssembly AOT Compiler that supports Live Migration, Raiki
-          Tamura. <br />
+          Wanco: WebAssembly AOT Compiler that supports Live Migration,{" "}
+          <b>Raiki Tamura</b>. <br />
           <Link href="https://popl25.sigplan.org/track/POPL-2025-student-research-competition">
             POPL2025 Student Research Competition (Undergraduate)
           </Link>{" "}
           2nd Place.
         </List.Item>
         <List.Item>
-          wanco: ライブマイグレーションをサポートするWebAssemblyコンパイラ.
-          田村来希, 小谷大祐, 松本直樹, 岡部寿男. <br />
+          wanco: WebAssembly Compiler that supports Live Migration (in
+          Japanese). <b>Raiki Tamura</b>, Daisuke Kotani, Naoki Matsumoto, Yasuo Okabe.{" "}
+          <br />
           <Link href="https://sigos.ipsj.or.jp/event/comsys2024/">
-            情報処理学会 第36回コンピュータシステム・シンポジウム (ComSys 2024)
+            IPSJ 36th Computer System Symposium (ComSys 2024)
           </Link>
-          . 優秀若手発表賞.
+          . Outstanding Young Researcher Presentation Award.
         </List.Item>
       </List>
 
@@ -129,7 +130,7 @@ export default function About() {
         </List.Item>
         <List.Item>
           <Text>
-            <Link href="https://github.com/kmc-jp/n64-emu">n64-emu</Link>
+            <Link href="https://github.com/kmc-jp/kamo64">kamo64</Link>
             (author): Nintendo64 emulator
           </Text>
         </List.Item>
@@ -160,8 +161,8 @@ export default function About() {
         <List.Item>
           IPSJ Computer Science Research Award for Young Scientists (2025)
         </List.Item>
-        <List.Item>アプリ甲子園 2018 優勝</List.Item>
-        <List.Item>Unityインターハイ 2018 ゴールドアワード</List.Item>
+        <List.Item>Appli Koshien 2018. 1st Place</List.Item>
+        <List.Item>Unity Inter-High 2018. Gold Award</List.Item>
       </List>
 
       <Space h="md" />
@@ -193,7 +194,10 @@ export default function About() {
         Others
       </Text>
       <List>
-        <List.Item>2025年度未踏IT人材発掘・育成事業 クリエイター</List.Item>
+        <List.Item>
+          MITOU Program 2025 (IPA Exploratory IT Human Resources Project).
+          Creator
+        </List.Item>
         <List.Item>
           Kyoto University, Faculty of Engineering, Department of Informatics,
           Operating Systems. TA
@@ -202,21 +206,25 @@ export default function About() {
           Kyoto University, Faculty of Engineering, Department of Informatics,
           Computer Architecture. TA
         </List.Item>
-        <List.Item>セキュリティ・ミニキャンプ熊本2024 チューター</List.Item>
+        <List.Item>Security Mini-Camp Kumamoto 2024. Tutor</List.Item>
         <List.Item>Google Summer of Code 2023. (Organization: GCC)</List.Item>
         <List.Item>Global Cybersecurity Camp 2023 Singapore. Tutor</List.Item>
-        <List.Item>セキュリティ・ミニキャンプ宮崎2023 チューター</List.Item>
-        <List.Item>セキュリティ・キャンプ全国大会 2022. チューター</List.Item>
+        <List.Item>Security Mini-Camp Miyazaki 2023. Tutor</List.Item>
+        <List.Item>Security Camp National Convention 2022. Tutor</List.Item>
         <List.Item>
-          セキュリティ・キャンプ全国大会 2021 脅威解析トラックコース 修了
+          Security Camp National Convention 2021. Threat Analysis Track.
+          Completed
         </List.Item>
-        <List.Item>第8回 科学の甲子園 全国大会 埼玉県代表</List.Item>
-        <List.Item>SecHack365 開発駆動コース 修了</List.Item>
+        <List.Item>
+          The 8th Science Olympiad (Kagaku no Koshien) National Finals.
+          Saitama Prefecture Representative
+        </List.Item>
+        <List.Item>SecHack365. Development-Driven Course. Completed</List.Item>
       </List>
 
       <Space h="xl" />
       <Text size="sm" c="dimmed">
-        Last updated: 2026-02-17
+        Last updated: 2026-11-20
       </Text>
     </div>
   );
