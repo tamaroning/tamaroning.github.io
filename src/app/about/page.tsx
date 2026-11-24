@@ -4,6 +4,20 @@ import { List, Space, Text } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 
+const PGP_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEawR6uxYJKwYBBAHaRw8BAQdAKf1IyJifJb1MyZuxJWl858nTGtz+1LPSFrrI
+3+Y4syi0JFJhaWtpIFRhbXVyYSA8dGFtYXJvbjEyMDNAZ21haWwuY29tPoiWBBMW
+CAA+FiEEPNrL2MNLyslZPzTFX7CQeuQmJqcFAmsEersCGwMFCQPCZwAFCwkIBwIG
+FQoJCAsCBBYCAwECHgECF4AACgkQX7CQeuQmJqdg4wD/U55vqJJIXDs3AAQPzJYN
+fDvbxXLbt4rrrEgI8itHJ4wA/jwVAwiUzTlMLV+qsQErCt14hup50MS3f81ld0gU
+2pgHuDgEawR6vxIKKwYBBAGXVQEFAQEHQJqpHP1ITOWYvcRgINNUXvLh4pu41rqh
+G4HdlyZ/bDc9AwEIB4h+BBgWCAAmFiEEPNrL2MNLyslZPzTFX7CQeuQmJqcFAmsE
+er8CGwwFCQPCZwAACgkQX7CQeuQmJqd0fgD/UL5lmB2HN+3dQQk2WtD809kd+cUz
+lBuZelaWg1gPzVkBAIVGSUgbudkEoQh9oCzi7x+7ROgq7PICvCvJOluNQG4O
+=uQSn
+-----END PGP PUBLIC KEY BLOCK-----`;
+
 export default function About() {
   return (
     <div style={{ maxWidth: 560, margin: 20 }}>
@@ -221,6 +235,16 @@ export default function About() {
         </List.Item>
         <List.Item>SecHack365. Development-Driven Course. Completed</List.Item>
       </List>
+
+      <Space h="md" />
+
+      <Text fw={700} size="lg">
+        PGP Public Key
+      </Text>
+      <Text size="sm" ff="monospace">
+        3CDA CBD8 C34B CAC9 593F 34C5 5FB0 907A E426 26A7
+      </Text>
+      <pre style={{ fontSize: 12, overflowX: "auto" }}>{PGP_KEY}</pre>
 
       <Space h="xl" />
       <Text size="sm" c="dimmed">
