@@ -5,6 +5,7 @@ const mainLinks = [
 	{ link: '/about', label: 'About' },
 	{ link: '/links', label: 'Links' },
 	{ link: '/blog', label: 'Blog' },
+	{ link: '/pgp', label: 'PGP' },
 ];
 
 export function MyHeader() {
